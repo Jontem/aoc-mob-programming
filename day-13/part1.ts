@@ -49,14 +49,17 @@ function readInput(file: string): string {
   return textFile;
 }
 
-function parseInput(fileContent: string): ReadonlyArray<number | undefined> {
+function parseInput(fileContent: string): Array<LayerState | undefined> {
   const rows = fileContent.split("\n");
   const array: Array<number> = [];
   rows.forEach(r => {
     const { depth, range } = parseRow(r);
     array[depth] = range;
   });
-  return array;
+
+  return array.map((v): LayerState => {
+    return v && { range: v, velocity: 1, scannerPos: 0 };
+  });
 }
 
 function parseRow(r: string) {
@@ -68,7 +71,18 @@ function parseRow(r: string) {
 }
 
 function rootReducer(state: RootState, action: Action): RootState {
-  switch (action) {
+  switch (action.type) {
+    case "movePacket": {
+      const newPacketPos = state.packetAtLayerPos + 1;
+      const newLayer = state.layers[newPacketPos];
+      const punishment =
+        newLayer.scannerPos === 0 ? newPacketPos * newLayer.range : 0;
+      return {
+        ...state,
+        packetAtLayerPos: newPacketPos,
+        punishment: state.punishment + punishment
+      };
+    }
     default:
       return state;
   }
