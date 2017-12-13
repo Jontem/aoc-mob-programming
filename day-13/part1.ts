@@ -20,6 +20,7 @@ type Action = MoveScannerAction | MovePacketAction;
 interface LayerState {
   readonly scannerPos: number;
   readonly range: number;
+  readonly velocity: number;
 }
 
 const input: string = readInput(path.join(__dirname, "./input.txt"));
@@ -74,7 +75,17 @@ function rootReducer(state: RootState, action: Action): RootState {
 }
 
 function layerReducer(state: LayerState, action: Action): LayerState {
-  switch (action) {
+  switch (action.type) {
+    case "moveScanner":
+      const newVelocity =
+        state.scannerPos >= state.range - 1 || state.scannerPos === 0
+          ? -state.velocity
+          : state.velocity;
+      return {
+        ...state,
+        scannerPos: state.scannerPos + newVelocity,
+        velocity: newVelocity
+      };
     default:
       return state;
   }
