@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-let i = 0;
+//let i = 0;
 
 interface MoveScannerAction {
   readonly type: "moveScanner";
@@ -35,18 +35,19 @@ main();
 function main() {
   let state: RootState = {
     layers: layerStateArray,
-    packetAtLayerPos: 0,
+    packetAtLayerPos: -1,
     punishment: 0
   };
-  console.log(i++, state);
+  console.log(-1, state);
   for (let i = 0; i < layerStateArray.length; i++) {
     state = rootReducer(state, {
       type: "movePacket"
     });
+    console.log(i, state);
     state = rootReducer(state, {
       type: "moveScanner"
     });
-    console.log(i++, state);
+    console.log(i, state);
   }
   console.log(state.punishment);
 }

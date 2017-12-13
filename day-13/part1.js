@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
-let i = 0;
 const input = readInput(path.join(__dirname, "./input.txt"));
 const layerStateArray = parseInput(input);
 // console.log(layerStateArray);
@@ -10,18 +9,19 @@ main();
 function main() {
     let state = {
         layers: layerStateArray,
-        packetAtLayerPos: 0,
+        packetAtLayerPos: -1,
         punishment: 0
     };
-    console.log(i++, state);
+    console.log(-1, state);
     for (let i = 0; i < layerStateArray.length; i++) {
         state = rootReducer(state, {
             type: "movePacket"
         });
+        console.log(i, state);
         state = rootReducer(state, {
             type: "moveScanner"
         });
-        console.log(i++, state);
+        console.log(i, state);
     }
     console.log(state.punishment);
 }
