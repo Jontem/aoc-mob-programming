@@ -6,6 +6,7 @@
   "author": "jonathanmourtada <jonathan.mourtada@divid.se>",
   "license": "MIT",
   "dependencies": {
+    "ts-node": "^4.0.1",
     "typescript": "^2.6.2"
   }
 }
