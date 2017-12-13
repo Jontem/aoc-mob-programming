@@ -7,11 +7,13 @@
   "license": "MIT",
   "dependencies": {
     "@types/node": "^8.0.58",
+    "npm-run-all": "^4.1.2",
     "ts-node": "^4.0.1",
     "typescript": "^2.6.2"
   },
   "scripts": {
-    "start": "ts-node day-13/part1.ts",
-    "compile": "tsc"
+    "start": "run-s compile run",
+    "compile": "tsc",
+    "run": "node day-13/part1.js"
   }
 }

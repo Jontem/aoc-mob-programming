@@ -38,6 +38,7 @@ function main() {
     packetAtLayerPos: 0,
     punishment: 0
   };
+  console.log(i++, state);
   for (let i = 0; i < layerStateArray.length; i++) {
     state = rootReducer(state, {
       type: "movePacket"
@@ -45,6 +46,7 @@ function main() {
     state = rootReducer(state, {
       type: "moveScanner"
     });
+    console.log(i++, state);
   }
   console.log(state.punishment);
 }
@@ -77,7 +79,6 @@ function parseRow(r: string) {
 }
 
 function rootReducer(state: RootState, action: Action): RootState {
-  console.log(i++, state);
   switch (action.type) {
     case "movePacket": {
       const newPacketPos = state.packetAtLayerPos + 1;
