@@ -1,11 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 
-interface RootState {
-  readonly layers: ReadonlyArray<LayerState | undefined>;
-  readonly packetAtLayerPos: number;
-  readonly punishment: number;
-}
+let i = 0;
 
 interface MoveScannerAction {
   readonly type: "moveScanner";
@@ -17,6 +13,12 @@ interface MovePacketAction {
 
 type Action = MoveScannerAction | MovePacketAction;
 
+interface RootState {
+  readonly layers: ReadonlyArray<LayerState | undefined>;
+  readonly packetAtLayerPos: number;
+  readonly punishment: number;
+}
+
 interface LayerState {
   readonly scannerPos: number;
   readonly range: number;
@@ -24,24 +26,28 @@ interface LayerState {
 }
 
 const input: string = readInput(path.join(__dirname, "./input.txt"));
-const array = parseInput(input);
+const layerStateArray = parseInput(input);
 
-console.log(array);
+// console.log(layerStateArray);
 
-let state: RootState = {
-  layers: array,
-  packetAtLayerPos: 0,
-  punishment: 0
-};
-for (let i = 0; i < array.length; i++) {
-  state = rootReducer(state, {
-    type: "movePacket"
-  });
-  state = rootReducer(state, {
-    type: "moveScanner"
-  });
+main();
+
+function main() {
+  let state: RootState = {
+    layers: layerStateArray,
+    packetAtLayerPos: 0,
+    punishment: 0
+  };
+  for (let i = 0; i < layerStateArray.length; i++) {
+    state = rootReducer(state, {
+      type: "movePacket"
+    });
+    state = rootReducer(state, {
+      type: "moveScanner"
+    });
+  }
+  console.log(state.punishment);
 }
-
 function readInput(file: string): string {
   const textFile = fs.readFileSync(file, {
     encoding: "utf8"
@@ -51,14 +57,14 @@ function readInput(file: string): string {
 
 function parseInput(fileContent: string): Array<LayerState | undefined> {
   const rows = fileContent.split("\n");
-  const array: Array<number> = [];
+  const rangeArray: Array<number> = [];
   rows.forEach(r => {
     const { depth, range } = parseRow(r);
-    array[depth] = range;
+    rangeArray[depth] = range;
   });
 
-  return array.map((v): LayerState => {
-    return v && { range: v, velocity: 1, scannerPos: 0 };
+  return rangeArray.map(range => {
+    return range ? { range: range, velocity: -1, scannerPos: 0 } : undefined;
   });
 }
 
@@ -71,18 +77,25 @@ function parseRow(r: string) {
 }
 
 function rootReducer(state: RootState, action: Action): RootState {
+  console.log(i++, state);
   switch (action.type) {
     case "movePacket": {
       const newPacketPos = state.packetAtLayerPos + 1;
       const newLayer = state.layers[newPacketPos];
       const punishment =
-        newLayer.scannerPos === 0 ? newPacketPos * newLayer.range : 0;
+        newLayer && newLayer.scannerPos === 0
+          ? newPacketPos * newLayer.range
+          : 0;
+      // console.log(punishment);
       return {
         ...state,
         packetAtLayerPos: newPacketPos,
         punishment: state.punishment + punishment
       };
     }
+    case "moveScanner":
+      const newArray = state.layers.map(v => v && layerReducer(v, action));
+      return { ...state, layers: newArray };
     default:
       return state;
   }
