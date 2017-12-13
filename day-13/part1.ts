@@ -1,6 +1,9 @@
 import * as fs from "fs";
+import * as path from "path";
 
-const textFile = fs.readFileSync("./input.txt", { encoding: "utf8" });
+const textFile = fs.readFileSync(path.join(__dirname, "./input.txt"), {
+  encoding: "utf8"
+});
 
 const rows = textFile.split("\n");
 
